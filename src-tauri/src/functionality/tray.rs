@@ -1,7 +1,7 @@
-use tauri::{AppHandle};
-use tauri::tray::TrayIcon;
-use tray_icon::Icon;
 use tauri::image::Image;
+use tauri::tray::TrayIcon;
+use tauri::AppHandle;
+use tray_icon::Icon;
 
 /* Un-used
 #[tauri::command]

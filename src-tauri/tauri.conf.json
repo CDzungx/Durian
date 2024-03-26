@@ -45,28 +45,6 @@
   "version": "4.2.0",
   "identifier": "com.dorion.dev",
   "plugins": {
-    "deep-link": {
-      "domain": [
-        {
-          "host": "discord.com",
-          "pathPrefix": [
-            "/app"
-          ]
-        },
-        {
-          "host": "ptb.discord.com",
-          "pathPrefix": [
-            "/app"
-          ]
-        },
-        {
-          "host": "canary.discord.com",
-          "pathPrefix": [
-            "/app"
-          ]
-        }
-      ]
-    }
   },
   "app": {
     "macOSPrivateApi": true,

@@ -1,41 +1,41 @@
 #![cfg_attr(
-all(not(debug_assertions), target_os = "windows"),
-windows_subsystem = "windows"
+  all(not(debug_assertions), target_os = "windows"),
+  windows_subsystem = "windows"
 )]
 
 use functionality::tray as myTray;
 use std::time::Duration;
-use tauri::{Manager, AppHandle, image::Image,
-            menu::{Menu, MenuBuilder, MenuItemBuilder},
-            tray::{TrayIcon, TrayIconBuilder, TrayIconEvent, ClickType},
-            process::restart, Runtime, WebviewWindow, WebviewWindowBuilder, App,
+use tauri::{
+  image::Image,
+  menu::{Menu, MenuBuilder, MenuItemBuilder},
+  process::restart,
+  tray::{ClickType, TrayIcon, TrayIconBuilder, TrayIconEvent},
+  App, AppHandle, Manager, Runtime, WebviewWindow, WebviewWindowBuilder,
 };
 //use tauri_plugin_deep_link::DeepLinkExt;
 
-use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
-use windows::core::HSTRING;
 use config::get_config;
 use injection::{
-    client_mod::{self, load_mods_js},
-    injection_runner::{self, PREINJECT},
-    local_html, plugin, theme,
+  client_mod::{self, load_mods_js},
+  injection_runner::{self, PREINJECT},
+  local_html, plugin, theme,
 };
 use processors::{css_preprocess, js_preprocess};
 use profiles::init_profiles_folders;
+use tauri_plugin_window_state::{AppHandleExt, StateFlags, WindowExt};
 use util::{
-    helpers,
-    logger::log,
-    notifications,
-    paths::get_webdata_dir,
-    process,
-    window_helpers::{self, clear_cache_check, set_user_agent},
+  helpers,
+  logger::log,
+  notifications,
+  paths::get_webdata_dir,
+  process,
+  window_helpers::{self, clear_cache_check, set_user_agent},
 };
 
 use crate::{
-    functionality::window::{after_build, setup_autostart},
-    util::logger,
+  functionality::window::{after_build, setup_autostart},
+  util::logger,
 };
-
 
 mod config;
 //mod deep_link;
@@ -48,128 +48,130 @@ mod util;
 mod window;
 
 fn create_systray(app: &App) -> Result<(), tauri::Error> {
-    let open_btn = MenuItemBuilder::with_id("open".to_string(), "Open").build(app)?;
-    let reload_btn = MenuItemBuilder::with_id("reload".to_string(), "Reload").build(app)?;
-    let restart_btn = MenuItemBuilder::with_id("restart".to_string(), "Restart").build(app)?;
-    let quit_btn = MenuItemBuilder::with_id("quit".to_string(), "Quit").build(app)?;
+  let open_btn = MenuItemBuilder::with_id("open".to_string(), "Open").build(app)?;
+  let reload_btn = MenuItemBuilder::with_id("reload".to_string(), "Reload").build(app)?;
+  let restart_btn = MenuItemBuilder::with_id("restart".to_string(), "Restart").build(app)?;
+  let quit_btn = MenuItemBuilder::with_id("quit".to_string(), "Quit").build(app)?;
 
-    let tray_menu = MenuBuilder::new(app)
-        .items(&[&open_btn, &reload_btn, &restart_btn, &quit_btn])
-        .build()?;
+  let tray_menu = MenuBuilder::new(app)
+    .items(&[&open_btn, &reload_btn, &restart_btn, &quit_btn])
+    .build()?;
 
-    TrayIconBuilder::new()
-        .menu(&tray_menu)
-        .title("Dorion")
-        .tooltip("Dorion")
-        .on_menu_event(move |app, event| {
-            let id = event.id().as_ref();
-            let window = app.get_webview_window("main").unwrap();
-            if (id == "quit") {
-                println!("quit clicked");
-                window.close().unwrap_or_default();
-                app.exit(0);
-            }
-            if (id == "open") {
-                println!("open clicked");
-                window.show().unwrap_or_default();
-                window.set_focus().unwrap_or_default();
-                window.unminimize().unwrap_or_default();
-            }
-            if (id == "restart") {
-                println!("restart clicked");
-                restart(&app.env());
-            }
-            if (id == "reload") {
-                println!("reload clicked");
-                window.eval("window.location.reload();").unwrap_or_default();
-            }
-        })
-        .on_tray_icon_event(|tray, event| {
-            let app = tray.app_handle();
-            if event.click_type == ClickType::Left {
-                // Reopen the window if the tray menu icon is clicked
-                match app.get_webview_window("main") {
-                    Some(win) => {
-                        let _ = win.show();
-                        let _ = win.set_focus();
-                        let _ = win.unminimize();
-                    }
-                    None => {}
-                }
-            }
-        }).build(app)?.set_icon(Some(Image::from_path("icons/icon.png")?))?;
+  TrayIconBuilder::new()
+    .menu(&tray_menu)
+    .title("Dorion")
+    .tooltip("Dorion")
+    .on_menu_event(move |app, event| {
+      let id = event.id().as_ref();
+      let window = app.get_webview_window("main").unwrap();
+      if (id == "quit") {
+        println!("quit clicked");
+        window.close().unwrap_or_default();
+        app.exit(0);
+      }
+      if (id == "open") {
+        println!("open clicked");
+        window.show().unwrap_or_default();
+        window.set_focus().unwrap_or_default();
+        window.unminimize().unwrap_or_default();
+      }
+      if (id == "restart") {
+        println!("restart clicked");
+        restart(&app.env());
+      }
+      if (id == "reload") {
+        println!("reload clicked");
+        window.eval("window.location.reload();").unwrap_or_default();
+      }
+    })
+    .on_tray_icon_event(|tray, event| {
+      let app = tray.app_handle();
+      if event.click_type == ClickType::Left {
+        // Reopen the window if the tray menu icon is clicked
+        match app.get_webview_window("main") {
+          Some(win) => {
+            let _ = win.show();
+            let _ = win.set_focus();
+            let _ = win.unminimize();
+          }
+          None => {}
+        }
+      }
+    })
+    .build(app)?
+    .set_icon(Some(Image::from_path("icons/icon.png")?))?;
 
-    Ok(())
+  Ok(())
 }
 
 #[tauri::command]
 fn should_disable_plugins() -> bool {
-    std::env::args().any(|arg| arg == "--disable-plugins")
+  std::env::args().any(|arg| arg == "--disable-plugins")
 }
 
 fn main() {
-    // Ensure config is created
-    config::init();
+  // Ensure config is created
+  config::init();
 
-    // ALso init logging
-    logger::init(true);
+  // ALso init logging
+  logger::init(true);
 
-    let config = get_config();
+  let config = get_config();
 
-    std::thread::sleep(Duration::from_millis(200));
+  std::thread::sleep(Duration::from_millis(200));
 
-    // before anything else, check if the clear_cache file exists
-    clear_cache_check();
+  // before anything else, check if the clear_cache file exists
+  clear_cache_check();
 
-    // Run the steps to init profiles
-    init_profiles_folders();
+  // Run the steps to init profiles
+  init_profiles_folders();
 
-    // maybe disable hardware acceleration for windows
-    if config.disable_hardware_accel.unwrap_or(false) {
-        #[cfg(target_os = "windows")]
-        {
-            let existing_args =
-                std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
-            std::env::set_var(
-                "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
-                format!("{} --disable-gpu", existing_args),
-            );
-        }
+  // maybe disable hardware acceleration for windows
+  if config.disable_hardware_accel.unwrap_or(false) {
+    #[cfg(target_os = "windows")]
+    {
+      let existing_args =
+        std::env::var("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS").unwrap_or_default();
+      std::env::set_var(
+        "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+        format!("{} --disable-gpu", existing_args),
+      );
     }
+  }
 
-    let context = tauri::generate_context!("tauri.conf.json");
-    let dorion_open = process::process_already_exists();
-    let client_type = config.client_type.unwrap_or("default".to_string());
-    let mut url = String::new();
+  let context = tauri::generate_context!("tauri.conf.json");
+  let dorion_open = process::process_already_exists();
+  let client_type = config.client_type.unwrap_or("default".to_string());
+  let mut url = String::new();
 
-    if client_type == "default" {
-        url += "https://discord.com/app";
-    } else {
-        url = format!("https://{}.discord.com/app", client_type);
-    }
+  if client_type == "default" {
+    url += "https://discord.com/app";
+  } else {
+    url = format!("https://{}.discord.com/app", client_type);
+  }
 
-    let parsed = reqwest::Url::parse(&url).unwrap();
-    let url_ext = tauri::WebviewUrl::External(parsed);
+  let parsed = reqwest::Url::parse(&url).unwrap();
+  let url_ext = tauri::WebviewUrl::External(parsed);
 
-    // If another process of Dorion is already open, show a dialog
-    // in the future I want to actually *reveal* the other runnning process
-    // instead of showing a popup, but this is fine for now
-    if dorion_open && !config.multi_instance.unwrap_or(false) {
-        // Send the dorion://open deep link request
-        helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
+  // If another process of Dorion is already open, show a dialog
+  // in the future I want to actually *reveal* the other runnning process
+  // instead of showing a popup, but this is fine for now
+  if dorion_open && !config.multi_instance.unwrap_or(false) {
+    // Send the dorion://open deep link request
+    helpers::open_scheme("dorion://open".to_string()).unwrap_or_default();
 
-        // Exit
-        std::process::exit(0);
-    }
+    // Exit
+    std::process::exit(0);
+  }
 
-    // Safemode check
-    let safemode = std::env::args().any(|arg| arg == "--safemode");
-    log(format!("Safemode enabled: {}", safemode));
+  // Safemode check
+  let safemode = std::env::args().any(|arg| arg == "--safemode");
+  log(format!("Safemode enabled: {}", safemode));
 
-    let client_mods = load_mods_js();
+  let client_mods = load_mods_js();
 
-    #[allow(clippy::single_match)]
-    tauri::Builder::default()
+  #[allow(clippy::single_match)]
+  tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
         //.plugin(tauri_plugin_deep_link::init())
         .invoke_handler(tauri::generate_handler![

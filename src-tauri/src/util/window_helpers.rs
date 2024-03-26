@@ -1,91 +1,91 @@
+use super::paths::get_webdata_dir;
 use crate::config::get_config;
 use crate::util::logger::log;
-use super::paths::get_webdata_dir;
 
 static USERAGENT: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
 
 pub fn clear_cache_check() {
-    let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
+  let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
 
-    if !appdata.exists() {
-        std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
-    }
+  if !appdata.exists() {
+    std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
+  }
 
-    let cache_file = appdata.join("clear_cache");
+  let cache_file = appdata.join("clear_cache");
 
-    if cache_file.exists() {
-        // Delete the file
-        std::fs::remove_file(&cache_file).expect("Failed to remove clear_cache file!");
-        clear_cache();
-    }
+  if cache_file.exists() {
+    // Delete the file
+    std::fs::remove_file(&cache_file).expect("Failed to remove clear_cache file!");
+    clear_cache();
+  }
 }
 
 #[tauri::command]
 pub fn set_clear_cache(win: tauri::WebviewWindow) {
-    // Create a file called "clear_cache" in the appdata dir
-    // This will be read by the window when it closes
-    let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
+  // Create a file called "clear_cache" in the appdata dir
+  // This will be read by the window when it closes
+  let appdata = dirs::data_dir().unwrap_or_default().join("dorion");
 
-    if !appdata.exists() {
-        std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
-    }
+  if !appdata.exists() {
+    std::fs::create_dir_all(&appdata).expect("Failed to create dorion appdata dir!");
+  }
 
-    let cache_file = appdata.join("clear_cache");
+  let cache_file = appdata.join("clear_cache");
 
-    std::fs::write(cache_file, "").expect("Failed to create clear_cache file!");
+  std::fs::write(cache_file, "").expect("Failed to create clear_cache file!");
 
-    win.close().unwrap_or_default();
+  win.close().unwrap_or_default();
 }
 
 #[tauri::command]
 pub fn clear_cache() {
-    // Remove %appdata%/dorion/webdata
-    let webdata_dir = get_webdata_dir();
+  // Remove %appdata%/dorion/webdata
+  let webdata_dir = get_webdata_dir();
 
-    if webdata_dir.exists() {
-        log("Deleting cache...");
-        std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
-    }
+  if webdata_dir.exists() {
+    log("Deleting cache...");
+    std::fs::remove_dir_all(webdata_dir).expect("Failed to remove webdata dir!");
+  }
 }
 
 #[cfg(target_os = "windows")]
 #[tauri::command]
 pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
-    win
-        .with_webview(move |webview| unsafe {
-            let zoom = value.unwrap_or(
-                get_config()
-                    .zoom
-                    .unwrap_or("1.0".to_string())
-                    .parse::<f64>()
-                    .unwrap_or(1.0),
-            );
+  win
+    .with_webview(move |webview| unsafe {
+      let zoom = value.unwrap_or(
+        get_config()
+          .zoom
+          .unwrap_or("1.0".to_string())
+          .parse::<f64>()
+          .unwrap_or(1.0),
+      );
 
-            webview.controller().SetZoomFactor(zoom).unwrap_or_default();
-        })
-        .unwrap_or_default();
+      webview.controller().SetZoomFactor(zoom).unwrap_or_default();
+    })
+    .unwrap_or_default();
 }
 
 #[cfg(not(target_os = "windows"))]
 #[tauri::command]
 pub fn window_zoom_level(win: tauri::WebviewWindow, value: Option<f64>) {
-    let zoom = value.unwrap_or(
-        get_config()
-            .zoom
-            .unwrap_or("1.0".to_string())
-            .parse::<f64>()
-            .unwrap_or(1.0),
-    );
+  let zoom = value.unwrap_or(
+    get_config()
+      .zoom
+      .unwrap_or("1.0".to_string())
+      .parse::<f64>()
+      .unwrap_or(1.0),
+  );
 
-    win
-        .eval(&format!("document.body.style.zoom = '{}'", zoom))
-        .expect("Failed to set zoom level!");
+  win
+    .eval(&format!("document.body.style.zoom = '{}'", zoom))
+    .expect("Failed to set zoom level!");
 }
 
 #[cfg(not(target_os = "macos"))]
 #[tauri::command]
 pub fn remove_top_bar(win: tauri::WebviewWindow) {
-    win.set_decorations(false).unwrap_or(());
+  win.set_decorations(false).unwrap_or(());
 }
 
 // Top bar is broken for MacOS currently
@@ -95,53 +95,53 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 
 #[cfg(target_os = "windows")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-    use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-    use windows::core::{ComInterface, HSTRING};
-    win
-        .with_webview(|webview| unsafe {
-            let settings: ICoreWebView2Settings2 = webview
-                .controller()
-                .CoreWebView2()
-                .expect("Failed to get CoreWebView2!")
-                .Settings()
-                .expect("Failed to get Settings!")
-                .cast::<ICoreWebView2Settings2>()
-                .expect("Failed to cast to ICoreWebView2Settings2!");
+  use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
+  use windows::core::{ComInterface, HSTRING};
+  win
+    .with_webview(|webview| unsafe {
+      let settings: ICoreWebView2Settings2 = webview
+        .controller()
+        .CoreWebView2()
+        .expect("Failed to get CoreWebView2!")
+        .Settings()
+        .expect("Failed to get Settings!")
+        .cast::<ICoreWebView2Settings2>()
+        .expect("Failed to cast to ICoreWebView2Settings2!");
 
-            settings
-                .SetUserAgent(&HSTRING::from(USERAGENT))
-                .unwrap_or_default();
-        })
-        .expect("Failed to set user agent!");
+      settings
+        .SetUserAgent(&HSTRING::from(USERAGENT))
+        .unwrap_or_default();
+    })
+    .expect("Failed to set user agent!");
 
-    log("Set user agent!");
+  log("Set user agent!");
 }
 
 #[cfg(target_os = "linux")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-    use webkit2gtk::{SettingsExt, WebViewExt};
+  use webkit2gtk::{SettingsExt, WebViewExt};
 
-    win
-        .with_webview(|webview| {
-            let webview = webview.inner();
-            let settings = webview.settings().unwrap();
+  win
+    .with_webview(|webview| {
+      let webview = webview.inner();
+      let settings = webview.settings().unwrap();
 
-            settings.set_user_agent(Some(USERAGENT));
-        })
-        .expect("Failed to set user agent!");
+      settings.set_user_agent(Some(USERAGENT));
+    })
+    .expect("Failed to set user agent!");
 }
 
 #[cfg(target_os = "macos")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
-    use objc::{msg_send, sel, sel_impl};
-    use objc_foundation::{INSString, NSString};
+  use objc::{msg_send, sel, sel_impl};
+  use objc_foundation::{INSString, NSString};
 
-    win
-        .with_webview(|webview| {
-            let webview = webview.inner();
-            unsafe {
-                let _: () = msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
-            }
-        })
-        .expect("Failed to set user agent!");
+  win
+    .with_webview(|webview| {
+      let webview = webview.inner();
+      unsafe {
+        let _: () = msg_send![webview, setCustomUserAgent: NSString::from_str(USERAGENT)];
+      }
+    })
+    .expect("Failed to set user agent!");
 }
