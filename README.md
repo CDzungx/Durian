@@ -1,7 +1,7 @@
 <h1 align="center">
  <img height="100px" src="https://raw.githubusercontent.com/SpikeHD/Dorion/main/src-tauri/icons/icon.png" />
  <br />
- Dorion
+ Durian
 </h1>
 <div align="center">
  <img src="https://img.shields.io/github/actions/workflow/status/SpikeHD/Dorion/build.yml" />
@@ -20,6 +20,14 @@
  <br />
  https://discord.gg/agQ9mRdHMZ
 </div>
+
+# Fork:
+ - Migrate to Tauri V2
+ - Update workflows
+### TO-DO
+- [ ] Check notification
+- [ ] Check Discord presence
+- [ ] Fix title bar
 
 # Download
 
