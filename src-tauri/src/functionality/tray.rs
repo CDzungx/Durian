@@ -1,9 +1,10 @@
+/* Un-used
 use tauri::image::Image;
 use tauri::tray::TrayIcon;
 use tauri::AppHandle;
 use tray_icon::Icon;
 
-/* Un-used
+
 #[tauri::command]
 pub fn set_tray_icon(app: AppHandle, event: String) -> tauri::Result<()> {
     println!("Setting tray icon to {}", event.as_str());
