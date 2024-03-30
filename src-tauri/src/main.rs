@@ -166,7 +166,7 @@ fn main() {
 
    // Safemode check
    let safemode = std::env::args().any(|arg| arg == "--safemode");
-   log(format!("Safemode enabled: {}", safemode));
+   log!("Safemode enabled: {}", safemode);
 
    let client_mods = load_mods_js();
 
@@ -274,16 +274,16 @@ fn main() {
                 .data_directory(get_webdata_dir())
                 // Prevent flickering by starting hidden, and show later
                 .visible(false)
-                .resizable(true)
-                .maximizable(true)
-                .minimizable(true)
-                .closable(true)
-                .decorations(true)
+                //.decorations(false)
+                //.resizable(false)
+                //.maximizable(false)
+                //.minimizable(false)
+                //.closable(false)
                 .transparent(
                     config.blur.unwrap_or("none".to_string()) != "none"
                 )
                 .center()
-                .fullscreen(true)
+                //.fullscreen(true)
                 .build()?;
 
             // Set the user agent to one that enables all normal Discord features

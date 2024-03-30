@@ -1,4 +1,4 @@
-use crate::util::logger::log;
+use crate::log;
 use tauri::Manager;
 use tauri_plugin_notification::NotificationExt;
 
@@ -69,7 +69,7 @@ fn send_notification_internal(
 
 #[tauri::command]
 pub fn notif_count(window: tauri::WebviewWindow, amount: i32) {
-   log(format!("Setting notification count: {}", amount));
+   log!("Setting notification count: {}", amount);
 
    #[cfg(not(target_os = "linux"))]
    unsafe {
@@ -110,7 +110,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
 
    let hwnd = window.hwnd();
    if hwnd.is_err() {
-      log(format!("Failed to get window handle: {:?}", hwnd.err()));
+      log!("Failed to get window handle: {:?}", hwnd.err());
       return;
    }
 
@@ -157,7 +157,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
    let hicon = CreateIconFromResourceEx(presbits, ficon, 0x30000, 32, 32, flags);
    // Apparently things can fail with a success message, lol: https://github.com/microsoft/windows-rs/issues/2108
    if hicon.is_err() || amount == 0 {
-      log(format!("Failed to create icon: {:?}", hicon.err()));
+      log!("Failed to create icon: {:?}", hicon.err());
       // create null icon
 
       taskbar_list

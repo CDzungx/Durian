@@ -1,3 +1,4 @@
+use crate::log;
 use auto_launch::AutoLaunchBuilder;
 use tauri::{App, Manager, WebviewWindow};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -67,7 +68,7 @@ pub fn after_build(window: &WebviewWindow) {
    // Set user-agent through WebkitGTK config
    #[cfg(target_os = "linux")]
    {
-      use crate::util::logger::log;
+      use crate::log;
 
       window.with_webview(move |webview| {
             use webkit2gtk::{WebViewExt, SettingsExt, PermissionRequestExt, HardwareAccelerationPolicy};
@@ -87,7 +88,7 @@ pub fn after_build(window: &WebviewWindow) {
                 req.allow();
                 true
             });
-        }).unwrap_or_else(|_| log(format!("Failed to set user-agent")));
+        }).unwrap_or_else(|_| log!("Failed to set user-agent"));
    }
 
    window_zoom_level(window.clone(), None);
@@ -122,7 +123,7 @@ pub fn setup_autostart(app: &App) {
       autolaunch.disable().unwrap_or_default();
    }
 
-   println!(
+   log!(
       "Autolaunch enabled: {}",
       autolaunch.is_enabled().unwrap_or_default()
    );

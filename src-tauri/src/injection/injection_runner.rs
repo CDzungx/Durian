@@ -1,21 +1,21 @@
+use crate::{log, processors::js_preprocess::eval_js_imports};
 use include_flate::flate;
 use regex::Regex;
-use std::collections::HashMap;
-
-use crate::{processors::js_preprocess::eval_js_imports, util::logger::log};
+use std::{
+   collections::HashMap,
+   sync::atomic::{AtomicBool, Ordering},
+};
 
 use super::plugin::get_plugin_list;
 
-static mut TAURI_INJECTED: bool = false;
+static TAURI_INJECTED: AtomicBool = AtomicBool::new(false);
 
 flate!(pub static INJECTION: str from "./injection/postinject_min.js");
 flate!(pub static PREINJECT: str from "./injection/preinject_min.js");
 
 #[tauri::command]
 pub fn is_injected() {
-   unsafe {
-      TAURI_INJECTED = true;
-   }
+   TAURI_INJECTED.store(true, Ordering::Relaxed);
 }
 
 #[tauri::command]
@@ -43,7 +43,7 @@ fn load_plugins(win: &tauri::WebviewWindow, plugins: HashMap<String, String>) {
    for (name, script) in &plugins {
       // Ignore preload plguins
       if plugin_list.contains_key(name) {
-         log(format!("Skipping plugin {} (is preload)", name).as_str());
+         log!("Skipping plugin {} (is preload)", name);
          continue;
       }
 
@@ -77,9 +77,7 @@ pub fn load_injection_js(
    plugins: HashMap<String, String>,
 ) {
    // Tauri is always not injected when we call this
-   unsafe {
-      TAURI_INJECTED = false;
-   }
+   TAURI_INJECTED.store(false, Ordering::Relaxed);
 
    // Eval contents
    window.eval(contents.as_str()).unwrap_or(());

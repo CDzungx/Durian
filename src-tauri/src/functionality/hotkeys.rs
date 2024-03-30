@@ -1,10 +1,13 @@
 use crate::config;
-use crate::util::logger::log;
+use crate::log;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
+use std::sync::Mutex;
 use tauri::Manager;
 
 // Globally store the PTT keys
-static mut PTT_KEYS: Vec<String> = Vec::new();
-static mut PTT_ENABLED: bool = false;
+static PTT_KEYS: Mutex<Vec<String>> = Mutex::new(Vec::new());
+static PTT_ENABLED: AtomicBool = AtomicBool::new(false);
 
 #[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct PTTEvent {
@@ -18,26 +21,22 @@ pub fn start_hotkey_watcher(_win: tauri::WebviewWindow) {}
 pub fn start_hotkey_watcher(win: tauri::WebviewWindow) {
    use device_query::{DeviceQuery, DeviceState, Keycode};
    use std::{thread, time::Duration};
-
+   let config = config::get_config();
    let mut ptt_state = false;
 
    // Set global PTT keys
-   unsafe {
-      PTT_KEYS = crate::config::get_config()
-         .push_to_talk_keys
-         .unwrap_or_default();
-      PTT_ENABLED = crate::config::get_config().push_to_talk.unwrap_or(false);
-   }
+   *PTT_KEYS.lock().unwrap() = config.push_to_talk_keys.unwrap_or_default();
+   PTT_ENABLED.store(config.push_to_talk.unwrap_or_default(), Ordering::Relaxed);
 
    thread::spawn(move || {
       let device_state = DeviceState::new();
       loop {
-         if unsafe { !PTT_ENABLED } {
+         if !PTT_ENABLED.load(Ordering::Relaxed) {
             thread::sleep(Duration::from_millis(100));
             continue;
          }
 
-         let ptt_keys = unsafe { PTT_KEYS.clone() };
+         let ptt_keys = PTT_KEYS.lock().unwrap().clone();
          let keys: Vec<Keycode> = device_state.get_keys();
 
          // Recreate keys as a string vector
@@ -74,12 +73,12 @@ pub fn start_hotkey_watcher(win: tauri::WebviewWindow) {
          if ptt_held && !ptt_state {
             // Do PTT
             win.emit("ptt_toggle", PTTEvent { state: true })
-               .unwrap_or_else(|_| log("Error sending PTT event!"));
+               .unwrap_or_else(|_| log!("Error sending PTT event!"));
             ptt_state = true;
          } else if ptt_state && !ptt_held {
             // Stop PTT
             win.emit("ptt_toggle", PTTEvent { state: false })
-               .unwrap_or_else(|_| log("Error sending PTT toggle event!"));
+               .unwrap_or_else(|_| log!("Error sending PTT toggle event!"));
             ptt_state = false;
          }
 
@@ -103,9 +102,7 @@ pub fn save_ptt_keys(keys: Vec<String>) -> Result<(), String> {
       Ok(new_config) => {
          config::write_config_file(new_config);
 
-         unsafe {
-            PTT_KEYS = keys;
-         }
+         *PTT_KEYS.lock().unwrap() = keys;
          Ok(())
       }
       Err(e) => Err(e.to_string()),
@@ -122,15 +119,13 @@ pub fn toggle_ptt(state: bool) -> Result<(), String> {
 
    let new_config = serde_json::to_string(&parsed);
 
-   log(format!("PTT set to: {}", state));
+   log!("PTT set to: {}", state);
 
    match new_config {
       Ok(new_config) => {
          config::write_config_file(new_config);
 
-         unsafe {
-            PTT_ENABLED = state;
-         }
+         PTT_ENABLED.store(state, Ordering::Relaxed);
 
          Ok(())
       }

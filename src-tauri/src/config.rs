@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 
-use crate::util::logger::log;
+use crate::log;
 use crate::util::paths::get_config_dir;
 
 #[derive(Serialize, Deserialize)]
@@ -67,7 +67,7 @@ pub fn default_config() -> Config {
       push_to_talk: Option::from(false),
       push_to_talk_keys: Option::from(vec!["RControl".to_string()]),
       cache_css: Option::from(false),
-      use_native_titlebar: Option::from(false),
+      use_native_titlebar: Option::from(true),
       start_maximized: Option::from(false),
       profile: Option::from("default".to_string()),
       streamer_mode_detection: Option::from(false),
@@ -93,8 +93,8 @@ pub fn get_config() -> Config {
    let config_str = config_str.as_str();
 
    serde_json::from_str(config_str).unwrap_or_else(|e| {
-      log("Failed to parse config, using default config!");
-      log(format!("Error: {}", e));
+      log!("Failed to parse config, using default config!");
+      log!("Error: {}", e);
 
       default_config()
    })
