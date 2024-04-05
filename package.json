@@ -3,32 +3,33 @@
   "version": "4.2.0",
   "type": "module",
   "scripts": {
-    "build:js": "esbuild --bundle --minify --target=esnext --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && esbuild --bundle --minify --target=esnext --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
-    "dev": "pnpm build:js && pnpm build && tauri dev",
-    "build": "pnpm build:js && vite build",
+    "build:js": "bun build --target node --minify --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && bun build --target node --minify --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
+    "dev": "bun build:js && tauri dev",
+    "build": "bun build:js && vite build",
     "build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater src-tauri/updater",
     "preview": "vite preview",
     "tauri": "tauri",
     "format": "cargo fmt --manifest-path ./src-tauri/Cargo.toml --all && prettier src -w",
     "format:updater": "cargo fmt --manifest-path ./updater/Cargo.toml --all",
-    "lint": "eslint ./src ./src-tauri/injection/**/*.ts",
+    "lint": "biome check --apply ./src ./src-tauri/injection/**/*.ts",
     "clippy": "cargo clippy --manifest-path ./src-tauri/Cargo.toml --no-default-features -- -D warnings",
     "clippy:updater": "cargo clippy --manifest-path ./updater/Cargo.toml --no-default-features -- -D warnings",
-    "codefix": "pnpm format && pnpm clippy && pnpm lint --fix",
-    "codefix:updater": "pnpm format:updater && pnpm clippy:updater",
-    "codefix:all": "pnpm codefix && pnpm codefix:updater",
+    "codefix": "bun format && bun clippy && bun lint --fix",
+    "codefix:updater": "bun format:updater && bun clippy:updater",
+    "codefix:all": "bun codefix && bun codefix:updater",
     "shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
   },
   "devDependencies": {
-    "@tauri-apps/api": "2.0.0-beta.6",
+    "@biomejs/biome": "1.6.4",
+    "@tauri-apps/api": "2.0.0-beta.7",
     "@tauri-apps/cli": "2.0.0-beta.11",
-    "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "@typescript-eslint/parser": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "prettier": "4.0.0-alpha.8",
-    "typescript": "^5.4.3",
-    "vite": "^5.2.7"
+    "typescript": "^5.4.4",
+    "vite": "^5.2.8"
   },
   "dependencies": {
     "@tauri-apps/plugin-clipboard-manager": "2.1.0-beta.0",
@@ -39,6 +40,8 @@
     "@tauri-apps/plugin-notification": "2.0.0-beta.2",
     "@tauri-apps/plugin-os": "2.0.0-beta.2",
     "@tauri-apps/plugin-process": "2.0.0-beta.2",
-    "@tauri-apps/plugin-shell": "2.0.0-beta.2"
-  }
+    "@tauri-apps/plugin-shell": "2.0.0-beta.2",
+    "@types/node": "^20.12.4"
+  },
+  "trustedDependencies": ["@biomejs/biome"]
 }

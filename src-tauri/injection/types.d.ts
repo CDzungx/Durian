@@ -1,4 +1,4 @@
 interface TauriEvent {
-  type: string
-  payload: unknown
+	type: string;
+	payload: unknown;
 }

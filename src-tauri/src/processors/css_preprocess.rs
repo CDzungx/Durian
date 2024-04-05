@@ -288,9 +288,9 @@ pub async fn localize_images(win: tauri::WebviewWindow, css: String) -> String {
 
 async fn localize_fonts(win: tauri::WebviewWindow, css: String) -> String {
    let font_reg = Regex::new(
-      r#"@font-face.?\{(?:.|\n)+?src:.?url\((?:'|"|)(http.+?)\.([a-zA-Z0-9]{0,5})(?:'|"|)\)"#,
-   )
-   .unwrap();
+        r#"@font-face.{0,1}\{(?:.|\n)+?src:.{0,1}url\((?:'|"|)(http.+?)\.([a-zA-Z0-9]{0,5})(?:'|"|)\)"#,
+    )
+        .unwrap();
    let mut new_css = css.clone();
    let matches = font_reg.captures_iter(Box::leak(css.clone().into_boxed_str()));
 
