@@ -88,7 +88,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
       System::Com::{CoCreateInstance, CoInitialize, CoUninitialize, CLSCTX_ALL},
       UI::{
          Shell::{ITaskbarList3, TaskbarList},
-         WindowsAndMessaging::{CreateIconFromResourceEx, IMAGE_FLAGS, LR_DEFAULTCOLOR},
+         WindowsAndMessaging::{CreateIconFromResourceEx, IMAGE_FLAGS},
       },
    };
 

@@ -270,20 +270,20 @@ fn main() {
                     ).as_str()
                 )
                 .auto_resize()
-                .disable_file_drop_handler()
+                .disable_drag_drop_handler()
                 .data_directory(get_webdata_dir())
                 // Prevent flickering by starting hidden, and show later
                 .visible(false)
-                //.decorations(false)
-                //.resizable(false)
-                //.maximizable(false)
-                //.minimizable(false)
-                //.closable(false)
-                .transparent(
-                    config.blur.unwrap_or("none".to_string()) != "none"
-                )
+                // .decorations(true)
+                // .resizable(true)
+                // .maximizable(true)
+                // .minimizable(true)
+                // .closable(true)
+                // .transparent(
+                //     config.blur.unwrap_or("none".to_string()) != "none"
+                // )
                 .center()
-                //.fullscreen(true)
+                //.fullscreen(false)
                 .build()?;
 
             // Set the user agent to one that enables all normal Discord features

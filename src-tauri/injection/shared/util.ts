@@ -1,60 +1,62 @@
 export function cssSanitize(css: string) {
-  const style = document.createElement('style')
-  style.innerHTML = css
+	const style = document.createElement("style");
+	style.innerHTML = css;
 
-  document.head.appendChild(style)
+	document.head.appendChild(style);
 
-  if (!style.sheet) return
+	if (!style.sheet) return;
 
-  const result = Array.from(style.sheet.cssRules).map(rule => rule.cssText || '').join('\n')
+	const result = Array.from(style.sheet.cssRules)
+		.map((rule) => rule.cssText || "")
+		.join("\n");
 
-  document.head.removeChild(style)
-  return result
+	document.head.removeChild(style);
+	return result;
 }
 
 export async function timeout(ms: number) {
-  return new Promise(r => setTimeout(r, ms))
+	return new Promise((r) => setTimeout(r, ms));
 }
 
 export function isJson(s: string) {
-  try {
-    JSON.parse(s)
-  } catch (e) {
-    return false
-  }
-  return true
+	try {
+		JSON.parse(s);
+	} catch (e) {
+		return false;
+	}
+	return true;
 }
 
 /**
  * Sorta yoinked from https://github.com/uwu/shelter/blob/main/packages/shelter/src/index.ts
  */
 export async function waitForApp() {
-  // Ensure appMount exists
-  const appMount = document.querySelector('#app-mount')
+	// Ensure appMount exists
+	const appMount = document.querySelector("#app-mount");
 
-  if (!appMount) {
-    setTimeout(waitForApp, 100)
-    return
-  }
+	if (!appMount) {
+		setTimeout(waitForApp, 100);
+		return;
+	}
 
-  while (appMount.childElementCount === 0)
-    await new Promise((r) => setTimeout(r, 100))
+	while (appMount.childElementCount === 0)
+		await new Promise((r) => setTimeout(r, 100));
 
-  return appMount
+	return appMount;
 }
 
 export async function waitForElm(selector: string) {
-  const elm = document.querySelector(selector)
+	const elm = document.querySelector(selector);
 
-  if (!elm) {
-    await timeout(100)
-    return
-  }
+	if (!elm) {
+		await timeout(100);
+		return;
+	}
 
-  return elm
+	return elm;
 }
 
 export async function fetchImage(url: string) {
-  const { invoke } = window.__TAURI__
-  return await invoke('fetch_image', { url })
+	const { invoke } = window.__TAURI__;
+	return await invoke("fetch_image", { url });
 }

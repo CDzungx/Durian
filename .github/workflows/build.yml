@@ -38,19 +38,18 @@ jobs:
         with:
           toolchain: nightly
 
-      - uses: pnpm/action-setup@v3.0.0
-        with:
-          version: latest
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1.2.1
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Setup node
-        uses: actions/setup-node@v4.0.1
+        uses: actions/setup-node@v4
         with:
           node-version: latest
 
-      - uses: actions/cache@v4.0.2
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -84,16 +83,16 @@ jobs:
         run: rustup target add aarch64-apple-darwin
 
       - name: Build updater
-        run: pnpm build:updater
+        run: bun build:updater
         env:
           RUSTFLAGS: -Awarnings
 
       - name: Install dependencies
-        run: pnpm install && pnpm shupdate
+        run: bun install && bun shupdate
 
       - name: Build
         # Include seperate targets for MacOS since it needs to build for both aarch64 and x86_64
-        run: pnpm tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && pnpm tauri build --target x86_64-apple-darwin' || '' }}
+        run: bun tauri build ${{ matrix.platform == 'macos-latest' && '--target aarch64-apple-darwin && bun tauri build --target x86_64-apple-darwin' || '' }}
         env:
           RUSTFLAGS: -Awarnings
       
@@ -137,7 +136,7 @@ jobs:
       # Windows portable
       - name: (Windows) Upload portable
         if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_win64_portable
           path: Dorion.zip
@@ -145,7 +144,7 @@ jobs:
       # Windows MSI
       - name: (Windows) Upload .msi
         if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_win64_msi
           path: src-tauri/target/release/bundle/msi/*.msi
@@ -153,7 +152,7 @@ jobs:
       # Ubuntu portable
       - name: (Linux) Upload portable
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_portable
           path: src-tauri/target/release/dorion.tar.gz
@@ -161,21 +160,21 @@ jobs:
       # Ubuntu deb
       - name: (Linux) Upload .deb
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_deb
           path: src-tauri/target/release/bundle/deb/*.deb
 
       - name: (Linux) Upload .appimage
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_amd64_appimage
           path: src-tauri/target/release/bundle/appimage/*.AppImage
 
       - name: (MacOS) Upload x86 .dmg
         if: matrix.platform == 'macos-latest'
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: dorion_macos_x86-64_dmg
           path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg

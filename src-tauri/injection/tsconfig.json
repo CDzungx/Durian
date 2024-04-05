@@ -1,14 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "lib": ["ESNext", "DOM"],
-    "strict": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true
-  },
-  "include": ["./**/*.ts", "global.d.ts"]
+	"compilerOptions": {
+		"target": "esnext",
+		"lib": ["ESNext", "DOM"],
+		"strict": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"moduleResolution": "Node"
+	},
+	"include": ["./**/*.ts", "global.d.ts"]
 }

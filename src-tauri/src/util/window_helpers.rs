@@ -94,7 +94,7 @@ pub fn remove_top_bar(_win: tauri::WebviewWindow) {}
 #[cfg(target_os = "windows")]
 pub fn set_user_agent(win: &tauri::WebviewWindow) {
    use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings2;
-   use windows::core::{ComInterface, HSTRING};
+   use windows::core::{Interface, HSTRING};
    win.with_webview(|webview| unsafe {
       let settings: ICoreWebView2Settings2 = webview
          .controller()

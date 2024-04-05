@@ -1,56 +1,53 @@
 {
-  "build": {
-    "beforeDevCommand": "",
-    "beforeBuildCommand": "pnpm build",
-    "frontendDist": "https://discord.com/app",
-    "devUrl": "https://discord.com/app"
-  },
-  "bundle": {
-    "active": true,
-    "category": "DeveloperTool",
-    "copyright": "",
-    "targets": "all",
-    "externalBin": [],
-    "icon": [
-      "icons/icon.ico",
-      "icons/icon.png"
-    ],
-    "windows": {
-      "certificateThumbprint": null,
-      "digestAlgorithm": "sha256",
-      "timestampUrl": ""
-    },
-    "longDescription": "",
-    "macOS": {
-      "entitlements": null,
-      "exceptionDomain": "",
-      "frameworks": [],
-      "providerShortName": null,
-      "signingIdentity": null
-    },
-    "resources": [
-      "injection/shelter.js",
-      "icons/icon*.ico",
-      "icons/icon_macos.png",
-      "../updater"
-    ],
-    "shortDescription": "",
-    "linux": {
-      "deb": {
-        "depends": []
-      }
-    }
-  },
-  "productName": "Dorion",
-  "version": "4.2.0",
-  "identifier": "com.dorion.dev",
-  "plugins": {
-  },
-  "app": {
-    "macOSPrivateApi": true,
-    "withGlobalTauri": true,
-    "security": {
-      "csp": null
-    }
-  }
+	"build": {
+		"beforeDevCommand": "",
+		"beforeBuildCommand": "pnpm build",
+		"frontendDist": "https://discord.com/app",
+		"devUrl": "https://discord.com/app"
+	},
+	"bundle": {
+		"active": true,
+		"category": "DeveloperTool",
+		"copyright": "",
+		"targets": "all",
+		"externalBin": [],
+		"icon": ["icons/icon.ico", "icons/icon.png"],
+		"windows": {
+			"allowDowngrades": true,
+			"certificateThumbprint": null,
+			"digestAlgorithm": "sha256",
+			"timestampUrl": ""
+		},
+		"longDescription": "",
+		"macOS": {
+			"entitlements": null,
+			"exceptionDomain": "",
+			"frameworks": [],
+			"providerShortName": null,
+			"signingIdentity": null
+		},
+		"resources": [
+			"injection/shelter.js",
+			"icons/icon*.ico",
+			"icons/icon_macos.png",
+			"updater"
+		],
+		"shortDescription": "",
+		"linux": {
+			"deb": {
+				"depends": []
+			}
+		}
+	},
+	"productName": "Dorion",
+	"version": "4.2.0",
+	"identifier": "com.dorion.dev",
+	"plugins": {},
+	"app": {
+		"macOSPrivateApi": true,
+		"withGlobalTauri": true,
+		"security": {
+			"csp": null
+		}
+	}
 }
