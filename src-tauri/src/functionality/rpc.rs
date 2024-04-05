@@ -98,7 +98,7 @@ pub fn start_rpc_server(win: WebviewWindow) {
          arguments: None,
       }]);
 
-      detectable.name = payload.name.clone();
+      detectable.name.clone_from(&payload.name);
 
       // Save the detectable to the local file
       append_to_local(vec![detectable.clone()]);

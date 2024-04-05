@@ -1,5 +1,4 @@
 import { isJson } from "./util";
-
 export function proxyFetch() {
 	window.nativeFetch = window.fetch;
 

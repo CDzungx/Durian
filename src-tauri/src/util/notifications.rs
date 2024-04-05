@@ -161,7 +161,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
       // create null icon
 
       taskbar_list
-         .SetOverlayIcon::<windows::Win32::Foundation::HWND, _, _>(hwnd.into(), None, None)
+         .SetOverlayIcon::<windows::Win32::Foundation::HWND, _, _>(hwnd, None, None)
          .unwrap_or_default();
       return;
    }
@@ -169,7 +169,7 @@ pub unsafe fn set_notif_icon(window: &tauri::WebviewWindow, amount: i32) {
    let hicon = hicon.unwrap();
 
    taskbar_list
-      .SetOverlayIcon::<windows::Win32::Foundation::HWND, _, _>(hwnd.into(), hicon, None)
+      .SetOverlayIcon::<windows::Win32::Foundation::HWND, _, _>(hwnd, hicon, None)
       .unwrap_or_default();
 
    CoUninitialize();

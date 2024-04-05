@@ -88,13 +88,10 @@ fn create_systray(app: &App) -> Result<(), tauri::Error> {
          let app = tray.app_handle();
          if event.click_type == ClickType::Left {
             // Reopen the window if the tray menu icon is clicked
-            match app.get_webview_window("main") {
-               Some(win) => {
-                  let _ = win.show();
-                  let _ = win.set_focus();
-                  let _ = win.unminimize();
-               }
-               None => {}
+            if let Some(win) = app.get_webview_window("main") {
+               let _ = win.show();
+               let _ = win.set_focus();
+               let _ = win.unminimize();
             }
          }
       })
@@ -173,6 +170,8 @@ fn main() {
    #[allow(clippy::single_match)]
    tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_cors_fetch::init())
         //.plugin(tauri_plugin_deep_link::init())
         .invoke_handler(tauri::generate_handler![
           should_disable_plugins,
@@ -259,6 +258,7 @@ fn main() {
 
             // First, grab preload plugins
             let title = format!("Dorion - v{}", app.package_info().version);
+
             let win = WebviewWindowBuilder::new(app, "main", url_ext)
                 .title(title.as_str())
                 .initialization_script(
@@ -290,7 +290,7 @@ fn main() {
             set_user_agent(&win);
 
             // Create the system tray
-            let _ = create_systray(&app);
+            let _ = create_systray(app);
 
             // If safemode is enabled, stop here
             if safemode {
