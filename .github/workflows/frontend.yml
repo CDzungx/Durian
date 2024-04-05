@@ -40,4 +40,4 @@ jobs:
         run: bun build:js
 
       - name: Run Biome checks
-        run: biome check --apply ./src
+        run: bun biome check --apply ./src
