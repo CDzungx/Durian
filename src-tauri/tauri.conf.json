@@ -30,7 +30,7 @@
 			"injection/shelter.js",
 			"icons/icon*.ico",
 			"icons/icon_macos.png",
-			"updater"
+			"../updater"
 		],
 		"shortDescription": "",
 		"linux": {
