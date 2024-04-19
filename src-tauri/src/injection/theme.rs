@@ -67,7 +67,7 @@ pub fn theme_from_link(link: String) -> String {
       file_name.push_str(".css");
    }
 
-   let resp = reqwest::blocking::get(&link);
+   let resp = tauri_plugin_http::reqwest::blocking::get(&link);
 
    if resp.is_err() {
       return String::new();

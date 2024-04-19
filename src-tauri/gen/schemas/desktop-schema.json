@@ -5963,6 +5963,13 @@
           ]
         },
         {
+          "description": "webview:allow-set-webview-zoom -> Enables the set_webview_zoom command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:allow-set-webview-zoom"
+          ]
+        },
+        {
           "description": "webview:allow-webview-close -> Enables the webview_close command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -6037,6 +6044,13 @@
           "type": "string",
           "enum": [
             "webview:deny-set-webview-size"
+          ]
+        },
+        {
+          "description": "webview:deny-set-webview-zoom -> Denies the set_webview_zoom command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:deny-set-webview-zoom"
           ]
         },
         {
@@ -6914,10 +6928,17 @@
           ]
         },
         {
-          "description": "window-state:allow-restore-window-state -> Enables the restore_window_state command without any pre-configured scope.",
+          "description": "window-state:allow-filename -> Enables the filename command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "window-state:allow-restore-window-state"
+            "window-state:allow-filename"
+          ]
+        },
+        {
+          "description": "window-state:allow-restore-state -> Enables the restore_state command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window-state:allow-restore-state"
           ]
         },
         {
@@ -6928,10 +6949,17 @@
           ]
         },
         {
-          "description": "window-state:deny-restore-window-state -> Denies the restore_window_state command without any pre-configured scope.",
+          "description": "window-state:deny-filename -> Denies the filename command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "window-state:deny-restore-window-state"
+            "window-state:deny-filename"
+          ]
+        },
+        {
+          "description": "window-state:deny-restore-state -> Denies the restore_state command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "window-state:deny-restore-state"
           ]
         },
         {

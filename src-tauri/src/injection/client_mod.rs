@@ -1,5 +1,6 @@
 use include_flate::flate;
 use phf::phf_map;
+use tauri_plugin_http::reqwest::blocking;
 
 use crate::{
    config::{get_config, write_config_file},
@@ -21,6 +22,10 @@ pub static CLIENT_MODS: phf::Map<&'static str, ClientMod> = phf_map! {
   "Vencord" => ClientMod {
       script: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js",
       styles: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css",
+  },
+    "Equicord" => ClientMod {
+      script: "https://github.com/Equicord/Equicord/releases/download/latest/browser.js",
+      styles: "https://github.com/Equicord/Equicord/releases/download/latest/browser.css",
   },
 };
 
@@ -51,7 +56,7 @@ pub fn load_mods_js() -> String {
       let script_url = CLIENT_MODS.get(mod_name.as_str()).unwrap().script;
 
       tasks.push(std::thread::spawn(move || {
-         let response = match reqwest::blocking::get(script_url) {
+         let response = match blocking::get(script_url) {
             Ok(r) => r,
             Err(_) => {
                log!("Failed to load client mod JS for {}.", mod_name);
@@ -119,7 +124,7 @@ pub fn load_mods_css() -> String {
       }
 
       tasks.push(std::thread::spawn(move || {
-         let response = match reqwest::blocking::get(styles_url) {
+         let response = match blocking::get(styles_url) {
             Ok(r) => r,
             Err(_) => {
                log!("Failed to load client mod CSS for {}.", mod_name);

@@ -1,11 +1,11 @@
 {
 	"name": "dorion",
-	"version": "4.2.0",
+	"version": "5.0.0",
 	"type": "module",
 	"scripts": {
 		"build:js": "bun build --minify --outfile=src-tauri/injection/postinject_min.js src-tauri/injection/postinject.ts && bun build --minify --outfile=src-tauri/injection/preinject_min.js src-tauri/injection/preinject.ts",
 		"dev": "bun build:js && tauri dev",
-		"build": "bun build:js && vite build",
+		"build": "bun run build:js && vite build",
 		"build:updater": "cd updater && cargo build --release && cd .. && cp updater/target/release/updater src-tauri/updater",
 		"preview": "vite preview",
 		"tauri": "tauri",
@@ -20,16 +20,14 @@
 		"shupdate": "curl -L https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js -o src-tauri/injection/shelter.js"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.6.4",
+		"@biomejs/biome": "1.7.0",
 		"@tauri-apps/api": "2.0.0-beta.7",
 		"@tauri-apps/cli": "2.0.0-beta.11",
-		"@typescript-eslint/eslint-plugin": "^7.5.0",
-		"@typescript-eslint/parser": "^7.5.0",
+		"@typescript-eslint/eslint-plugin": "^7.7.0",
+		"@typescript-eslint/parser": "^7.7.0",
 		"esbuild": "^0.20.2",
-		"eslint": "^8.57.0",
-		"prettier": "4.0.0-alpha.8",
-		"typescript": "^5.4.4",
-		"vite": "^5.2.8"
+		"typescript": "^5.4.5",
+		"vite": "^5.2.9"
 	},
 	"dependencies": {
 		"@tauri-apps/plugin-clipboard-manager": "2.1.0-beta.0",
@@ -41,7 +39,7 @@
 		"@tauri-apps/plugin-os": "2.0.0-beta.2",
 		"@tauri-apps/plugin-process": "2.0.0-beta.2",
 		"@tauri-apps/plugin-shell": "2.0.0-beta.2",
-		"@types/node": "^20.12.4"
+		"@types/node": "^20.12.7"
 	},
 	"trustedDependencies": ["@biomejs/biome"]
 }

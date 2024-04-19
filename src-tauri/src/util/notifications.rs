@@ -1,11 +1,12 @@
 use crate::log;
 use tauri::Manager;
+use tauri_plugin_http::reqwest::blocking;
 use tauri_plugin_notification::NotificationExt;
 
 #[tauri::command]
 pub fn send_notification(win: tauri::WebviewWindow, title: String, body: String, icon: String) {
    // Write the result of the icon
-   let client = reqwest::blocking::Client::new();
+   let client = blocking::Client::new();
    let mut res = match client.get(icon).send() {
       Ok(res) => res,
       Err(_) => {

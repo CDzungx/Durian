@@ -1,4 +1,5 @@
 import { isJson } from "./util";
+
 export function proxyFetch() {
 	window.nativeFetch = window.fetch;
 
@@ -44,13 +45,31 @@ export function proxyFetch() {
 		}
 
 		const response = await http.fetch(url, {
-			responseType: 2,
+			responseType: 3,
 			...options,
 		});
 
 		// Adherence to what most scripts will expect to have available when they are using fetch(). These have to pretend to be promises
-		response.json = async () => JSON.parse(response.data);
-		response.text = async () => response.data;
+		response.json = async () => JSON.parse(await response.text());
+		response.text = async () => {
+			// Decode binary array to string
+			return response.data.reduce(
+				(data: string, byte: number) => data + String.fromCharCode(byte),
+				"",
+			);
+		};
+		response.arrayBuffer = async () => {
+			// Create a new arraybuffer
+			const buffer = new ArrayBuffer(response.data.length);
+			const view = new Uint8Array(buffer);
+
+			// Copy the data over
+			for (let i = 0; i < response.data.length; i++) {
+				view[i] = response.data[i];
+			}
+
+			return buffer;
+		};
 
 		response.headers = new Headers(response.headers);
 
